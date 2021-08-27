@@ -1,3 +1,5 @@
+_targets/*
+*/out/*
 .Rproj.user
 .Rhistory
 .RData
