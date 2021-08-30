@@ -1,5 +1,6 @@
-
 library(targets)
+library(tarchetypes)
+library(tibble)
 
 options(tidyverse.quiet = TRUE)
 tar_option_set(packages = c("tidyverse", "dataRetrieval", "urbnmapr", "rnaturalearth", "cowplot"))
@@ -10,7 +11,7 @@ source("1_fetch/src/get_site_data.R")
 source("3_visualize/src/map_sites.R")
 
 # Configuration
-states <- c('WI','MN','MI')
+states <- c('WI','MN','MI', 'IL')
 parameter <- c('00060')
 
 # Targets
@@ -18,19 +19,12 @@ list(
   # Identify oldest sites
   tar_target(oldest_active_sites, find_oldest_sites(states, parameter)),
 
-  # Pull site data
-  tar_target(wi_data,
-             get_site_data(oldest_active_sites,
-                           'WI',
-                           parameter)),
-  tar_target(mn_data,
-             get_site_data(oldest_active_sites,
-                           'MN',
-                           parameter)),
-  tar_target(mi_data,
-             get_site_data(oldest_active_sites,
-                           'MI',
-                           parameter)),
+  tar_map(
+    values = tibble(state_abb = states),
+    tar_target(data, get_site_data(oldest_active_sites, state_abb, parameter))
+    # Insert step for tallying data here
+    # Insert step for plotting data here
+  ),
 
   # Map oldest sites
   tar_target(
