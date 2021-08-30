@@ -7,11 +7,12 @@ tar_option_set(packages = c("tidyverse", "dataRetrieval", "urbnmapr", "rnaturale
 
 # Load functions needed by targets below
 source("1_fetch/src/find_oldest_sites.R")
+source("1_fetch/src/get_state_inventory.R")
 source("1_fetch/src/get_site_data.R")
 source("3_visualize/src/map_sites.R")
 
 # Configuration
-states <- c('WI','MN','MI', 'IL')
+states <- c('WI','MN','MI','IL','IN','IA')
 parameter <- c('00060')
 
 # Targets
@@ -21,7 +22,9 @@ list(
 
   tar_map(
     values = tibble(state_abb = states),
-    tar_target(data, get_site_data(oldest_active_sites, state_abb, parameter))
+    tar_target(nwis_inventory, get_state_inventory(oldest_active_sites,
+                                                   state_abb)),
+    tar_target(data, get_site_data(nwis_inventory, state_abb, parameter))
     # Insert step for tallying data here
     # Insert step for plotting data here
   ),
