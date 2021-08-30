@@ -22,8 +22,8 @@ list(
 
   tar_map(
     values = tibble(state_abb = states),
-    tar_target(nwis_inventory, get_state_inventory(oldest_active_sites,
-                                                   state_abb)),
+    tar_target(nwis_inventory, dplyr::filter(oldest_active_sites,
+                                             state_cd == state_abb)),
     tar_target(data, get_site_data(nwis_inventory, state_abb, parameter))
     # Insert step for tallying data here
     # Insert step for plotting data here
