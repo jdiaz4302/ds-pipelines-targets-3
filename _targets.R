@@ -28,13 +28,15 @@ list(
       mutate(state_plot_files = sprintf("3_visualize/out/timeseries_%s.png", state_abb)),
     tar_target(nwis_inventory, dplyr::filter(oldest_active_sites,
                                              state_cd == state_abb)),
-    tar_target(data, get_site_data(nwis_inventory, state_abb, parameter)),
+    tar_target(nwis_data, get_site_data(nwis_inventory, state_abb, parameter)),
     # Insert step for tallying data here
-    tar_target(tally, tally_site_obs(data)),
+    tar_target(tally, tally_site_obs(nwis_data)),
     # Insert step for plotting data here
-    tar_target(timeseries_png, plot_site_data(state_plot_files,
-                                              data,
-                                              parameter)),
+    tar_target(timeseries_png,
+               plot_site_data(state_plot_files,
+                              nwis_data,
+                              parameter),
+               format = 'file'),
     names = state_abb
   ),
 
